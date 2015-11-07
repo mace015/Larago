@@ -24,6 +24,12 @@ class Snippet extends Model {
 
 	}
 
+	public function comments(){
+
+		return $this->hasMany('\App\Models\Comment', 'id_snippet');
+
+	}
+
 	public function like(){
 
 		if (Auth::check()){
@@ -37,6 +43,21 @@ class Snippet extends Model {
 				));
 			}
 			return true;
+		}
+
+	}
+
+	public function isLiked(){
+
+		if (Auth::check()){
+			$like = Like::fetch($this->id, Auth::user()->id)->first();
+			if ($like){
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
 		}
 
 	}

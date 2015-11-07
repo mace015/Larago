@@ -6,6 +6,12 @@ class Comment extends Model {
 
 	protected $table = 'comments';
 
-	protected $protected = ['id_user'];
+	protected $guarded = array('id');
+
+	public function author(){
+
+		return $this->belongsTo('\App\Models\User', 'id_user');
+
+	}
 
 }

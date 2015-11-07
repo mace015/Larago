@@ -39,6 +39,9 @@ Route::group(array('middleware' => 'auth'), function(){
 	Route::post('/addsnippet', array('uses' => 'SnippetController@postAddSnippet'));
 	Route::get('/mysnippets', array('as' => 'mysnippets', 'uses' => 'SnippetController@getMySnippets'));
 
+	Route::get('/snippet/like/{id}', array('as' => 'like', 'uses' => 'SnippetController@likeSnippet'));
+	Route::post('/snippet/comment/{id}', array('as' => 'comment', 'uses' => 'SnippetController@addComment'));
+
 	Route::get('/logout', array('as' => 'logout', 'uses' => 'UserController@logout'));
 
 });

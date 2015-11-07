@@ -25,9 +25,17 @@
 
 			    <div class="page-header">
 					<h1 id="forms"> {{ $snippet->name }}
-						<div class="pull-right">
-				        	<a href="" class="btn btn-danger"> <i class="fa fa-thumbs-up"></i> Like this snippet </a>
-						</div>
+						@if(Auth::check())
+							<div class="pull-right">
+					        	<a href="{{ URL::route('like', array($snippet->id)) }}" class="btn btn-danger">
+					        		@if ($snippet->isLiked())
+					        			<i class="fa fa-thumbs-down"></i> Unlike this snippet
+					        		@else
+					        			<i class="fa fa-thumbs-up"></i> Like this snippet
+					        		@endif
+					        	</a>
+							</div>
+						@endif
 					</h1>
 			    </div>
 
@@ -66,45 +74,20 @@
 		</div>
 	</div>
 
-	<div class="row">
-		<div class="container">
-			
-			<div class="col-md-6">
-				<blockquote>
-					<p>I realy like this snippet, great job, keep it up!!</p>
-					<small>Comment by: <cite title="Source Title">Mace Muilman</cite></small>
-				</blockquote>
+	@foreach($snippet->comments as $comment)
+		<div class="row">
+			<div class="container">
+				
+				<div class="col-md-12">
+					<blockquote>
+						<p>{{ $comment->comment }}</p>
+						<small>Comment by: <cite title="Source Title">{{ $comment->author->name }}</cite></small>
+					</blockquote>
+				</div>
+
 			</div>
-
-			<div class="col-md-6">
-				<blockquote class="pull-right">
-					<p>Great Snippet!</p>
-					<small>Comment by: <cite title="Source Title">Jannick Berkhout</cite></small>
-				</blockquote>
-			</div>	
-
 		</div>
-	</div>
-
-	<div class="row">
-		<div class="container">
-			
-			<div class="col-md-6">
-				<blockquote>
-					<p>This is one of my favorite snippets! GJ!</p>
-					<small>Comment by: <cite title="Source Title">Martijn de Ridder</cite></small>
-				</blockquote>
-			</div>
-
-			<div class="col-md-6">
-				<blockquote class="pull-right">
-					<p>I have used this snippet in my project!</p>
-					<small>Comment by: <cite title="Source Title">Stefan Koolen</cite></small>
-				</blockquote>
-			</div>	
-
-		</div>
-	</div>
+	@endforeach
 
 	<div class="row">
 		<div class="container">
@@ -123,28 +106,27 @@
 			@endif
 
 		    <div class="well bs-component">
-		      	<form class="form-horizontal">
-			        <fieldset>
-			          	<legend class="center">Comment on this snippet: </legend>
-			          
-							{!! Form::open() !!}
-								<div class="form-group">
-									<label for="Comment" class="col-md-2 control-label">Comment</label>
-									<div class="col-md-10">
-										<textarea class="form-control" rows="3" name="Comment"></textarea>
-										<span class="help-block">Please do not use any foul language or place useless comments, these will be removed.</span>
-									</div>
-								</div>
+			    <fieldset>
 
-								<div class="form-group">
-									<div class="col-md-10 col-md-offset-2">
-										<button type="submit" class="btn btn-danger">Send comment</button>
-									</div>
-								</div>
-							{!! Form::close() !!}
-			          
-			        	</fieldset>
-		      	</form>
+	          		<legend class="center">Comment on this snippet: </legend>
+	          
+	          		{!! Form::open(array('route' => array('comment', $snippet->id))) !!}
+						<div class="form-group">
+							<label for="Comment" class="col-md-2 control-label">Comment</label>
+							<div class="col-md-10">
+								<textarea class="form-control" rows="3" name="comment"></textarea>
+								<span class="help-block">Please do not use any foul language or place useless comments, these will be removed.</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-md-10 col-md-offset-2">
+								<button type="submit" class="btn btn-danger">Send comment</button>
+							</div>
+						</div>
+					{!! Form::close() !!}
+	          
+	        	</fieldset>
 		  	</div>
 
 		</div>

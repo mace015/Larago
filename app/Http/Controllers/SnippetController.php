@@ -4,11 +4,13 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use \App\Http\Requests\AddSnippetRequest as AddSnippetRequest;
+use \App\Http\Requests\AddSnippetRequest;
+use \App\Http\Requests\AddCommentRequest;
 
 use Auth, View, URL, Redirect, Validator, Input, Session, Processor;
 
 use \App\Models\Snippet as Snippet;
+use \App\Models\Comment as Comment;
 
 class SnippetController extends BaseController {
 
@@ -21,8 +23,22 @@ class SnippetController extends BaseController {
 
 	public function getSnippet($id){
 
-		$snippet = Snippet::findOrFail($id);
+		$snippet = Snippet::with('author', 'likes', 'comments')->find($id);
+		if (!$snippet){
+			return Redirect::route('snippets');
+		}
 		return View::make('snippet.snippet', compact('snippet'));
+
+	}
+
+	public function likeSnippet($id){
+
+		$snippet = Snippet::find($id);
+		if (!$snippet){
+			return Redirect::route('snippets');
+		}
+		$snippet->like();
+		return Redirect::route('snippet', array($snippet->id));
 
 	}
 
@@ -42,6 +58,18 @@ class SnippetController extends BaseController {
 
 		$snippets = Auth::user()->snippets()->with('author', 'likes')->paginate(9);
 		return View::make('snippet.mySnippets', compact('snippets'));
+
+	}
+
+	public function addComment($id, AddCommentRequest $request){
+
+		Comment::create(array(
+			'id_snippet' => $id,
+			'id_user' => Auth::user()->id,
+			'comment' => Input::get('comment')
+		));
+
+		return Redirect::route('snippet', array($id));
 
 	}
 

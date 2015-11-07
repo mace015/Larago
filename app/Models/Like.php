@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Like extends Model {
 
 	protected $table = 'snippets_likes';
+	protected $guarded = array('id');
 
 	public function scopeFetch($query, $id_snippet, $id_user){
 

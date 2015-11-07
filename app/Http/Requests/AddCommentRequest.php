@@ -4,7 +4,7 @@ use App\Http\Requests\Request;
 
 use Auth;
 
-class AddSnippetRequest extends Request {
+class AddCommentRequest extends Request {
 
 	/**
 	 * Determine if the user is authorized to make this request.
@@ -24,10 +24,7 @@ class AddSnippetRequest extends Request {
 	public function rules()
 	{
 		return [
-			'name' => 'required|min:3|max:50',
-			'short_desc' => 'required|min:5|max:50',
-			'long_desc' => 'min:5',
-			'code' => 'required'
+			'comment' => 'required|min:4|max:255'
 		];
 	}
 

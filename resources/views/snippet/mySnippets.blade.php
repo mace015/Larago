@@ -12,12 +12,22 @@
 					<h1 id="forms">My Snippets</h1>
 			    </div>
 
-			    <p>Here you can view your own snippest</p>
+			    <p>Here you can view your own snippest:</p>
 
 		    </div>
 
 		</div>
 	</div>
+
+	@if (count($snippets->getCollection()->all()) == 0)
+		<div class="row">
+			<div class="container">
+				<div class="col-md-12">
+					<h1>Sorry, no snippets available!</h1>
+				</div>
+			</div>
+		</div>
+	@endif
 
 	@foreach(array_chunk($snippets->getCollection()->all(), 3) as $row)
 		<div class="row">
