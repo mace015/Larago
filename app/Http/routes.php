@@ -16,6 +16,9 @@ Route::get('/', array('as' => 'home', 'uses' => 'HomeController@getIndex'));
 Route::get('/snippet/{id}', array('as' => 'snippet', 'uses' => 'SnippetController@getSnippet'));
 Route::get('/snippets', array('as' => 'snippets', 'uses' => 'SnippetController@getSnippets'));
 
+// Implicit controller
+Route::controller('ajaxController', 'AjaxController');
+
 // Routes user must be a guest for.
 Route::group(array('middleware' => 'guest'), function(){
 
@@ -37,9 +40,12 @@ Route::group(array('middleware' => 'auth'), function(){
 
 	Route::get('/addsnippet', array('as' => 'addsnippet', 'uses' => 'SnippetController@getAddSnippet'));
 	Route::post('/addsnippet', array('uses' => 'SnippetController@postAddSnippet'));
+
+	Route::get('/editsnippet/{id}', array('as' => 'editsnippet', 'uses' => 'SnippetController@getEditSnippet'));
+	Route::post('/editsnippet/{id}', array('uses' => 'SnippetController@postEditSnippet'));
+
 	Route::get('/mysnippets', array('as' => 'mysnippets', 'uses' => 'SnippetController@getMySnippets'));
 
-	Route::get('/snippet/like/{id}', array('as' => 'like', 'uses' => 'SnippetController@likeSnippet'));
 	Route::post('/snippet/comment/{id}', array('as' => 'comment', 'uses' => 'SnippetController@addComment'));
 
 	Route::get('/logout', array('as' => 'logout', 'uses' => 'UserController@logout'));

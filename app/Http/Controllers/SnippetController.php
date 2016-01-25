@@ -31,17 +31,6 @@ class SnippetController extends BaseController {
 
 	}
 
-	public function likeSnippet($id){
-
-		$snippet = Snippet::find($id);
-		if (!$snippet){
-			return Redirect::route('snippets');
-		}
-		$snippet->like();
-		return Redirect::route('snippet', array($snippet->id));
-
-	}
-
 	public function getAddSnippet(){
 
 		return View::make('snippet.addSnippet');
@@ -51,6 +40,33 @@ class SnippetController extends BaseController {
 	public function postAddSnippet(AddSnippetRequest $request){
 
 		return Processor::init('SnippetProcessor', array('next' => 'snippets'))->storeSnippet();
+
+	}
+
+	public function getEditSnippet($id){
+
+		$snippet = Snippet::where('id_user', Auth::user()->id)->find($id);
+		if ($snippet){
+			return View::make('snippet.editSnippet', compact('snippet'));
+		} else {
+			return Redirect::route('home');
+		}
+
+	}
+
+	public function postEditSnippet(AddSnippetRequest $request, $id){
+
+		$snippet = Snippet::where('id_user', Auth::user()->id)->find($id);
+		if ($snippet){
+			$snippet->name = Input::get('name');
+			$snippet->short_desc = Input::get('short_desc');
+			$snippet->long_desc = Input::get('long_desc');
+			$snippet->code = Input::get('code');
+			$snippet->save();
+			return Redirect::route('mysnippets');
+		} else {
+			return Redirect::route('home');
+		}
 
 	}
 

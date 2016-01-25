@@ -36,13 +36,14 @@ class Snippet extends Model {
 			$like = Like::fetch($this->id, Auth::user()->id)->first();
 			if ($like){
 				$like->delete();
+				return 'false';
 			} else {
 				Like::create(array(
 					'id_snippet' => $this->id,
 					'id_user' => Auth::user()->id
 				));
+				return 'true';
 			}
-			return true;
 		}
 
 	}

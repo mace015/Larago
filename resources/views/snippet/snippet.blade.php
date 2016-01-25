@@ -27,7 +27,10 @@
 					<h1 id="forms"> {{ $snippet->name }}
 						@if(Auth::check())
 							<div class="pull-right">
-					        	<a href="{{ URL::route('like', array($snippet->id)) }}" class="btn btn-danger">
+								@if ($snippet->id_user == Auth::user()->id)
+									<a class="btn btn-danger" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> <i class="fa fa-pencil"></i> Edit this snipet </a>
+								@endif
+					        	<a href="javascript:toggleLike();" id="likeButton" class="btn btn-danger">
 					        		@if ($snippet->isLiked())
 					        			<i class="fa fa-thumbs-down"></i> Unlike this snippet
 					        		@else
@@ -38,6 +41,18 @@
 						@endif
 					</h1>
 			    </div>
+
+			    <script type="text/javascript">
+			    	function toggleLike(){
+			    		$.post('/ajaxController/like-snippet', { _token: '{{ csrf_token() }}', id: '{{ $snippet->id }}' }).done(function(data){
+			    			if (data == 'true'){
+			    				$("#likeButton").html('<i class="fa fa-thumbs-down"></i> Unlike this snippet');
+			    			} else {
+			    				$("#likeButton").html('<i class="fa fa-thumbs-up"></i> Like this snippet');
+			    			}
+			    		});
+			    	}
+			    </script>	
 
 			    <p> <strong> {{ $snippet->short_desc }} </strong> </p>
 			    <p> {{ $snippet->long_desc }} </p>
@@ -81,7 +96,7 @@
 				<div class="col-md-12">
 					<blockquote>
 						<p>{{ $comment->comment }}</p>
-						<small>Comment by: <cite title="Source Title">{{ $comment->author->name }}</cite></small>
+						<small>Comment by: <cite title="Author">{{ $comment->author->name }}</cite> @ <cite title="Date"> {{ date('d-m-Y H:i', strtotime($comment->created_at)) }} </cite></small>
 					</blockquote>
 				</div>
 
