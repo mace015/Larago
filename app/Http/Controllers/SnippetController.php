@@ -63,6 +63,10 @@ class SnippetController extends BaseController {
 			$snippet->long_desc = Input::get('long_desc');
 			$snippet->code = Input::get('code');
 			$snippet->save();
+
+			Session::flash('message', 'Your snippet has been edited!');
+			Session::flash('type', 'notice');
+
 			return Redirect::route('mysnippets');
 		} else {
 			return Redirect::route('home');
@@ -77,7 +81,7 @@ class SnippetController extends BaseController {
 
 	}
 
-	public function addComment($id, AddCommentRequest $request){
+	public function addComment(AddCommentRequest $request, $id){
 
 		Comment::create(array(
 			'id_snippet' => $id,
@@ -86,6 +90,37 @@ class SnippetController extends BaseController {
 		));
 
 		return Redirect::route('snippet', array($id));
+
+	}
+
+	public function editComment(){
+
+		if (Auth::check()){
+			$comment = Comment::where('id_user', Auth::user()->id)->find(Input::get('id'));
+			if ($comment){
+				$comment->comment = Input::get('comment');
+				$comment->save();
+
+				return 'true';
+			}
+		}
+
+		return 'false';
+
+	}
+
+	public function deleteComment(){
+
+		if (Auth::check()){
+			$comment = Comment::where('id_user', Auth::user()->id)->find(Input::get('id'));
+			if ($comment){
+				$comment->delete();
+
+				return 'true';
+			}
+		}
+
+		return 'false';
 
 	}
 

@@ -80,7 +80,7 @@
 								<div class="col-md-10">
 									<div id="editor">{{ $snippet->code }}</div> <br />
 									<span class="help-block">Put the code for your snippet here!</span>
-									<textarea class="form-control hidden codePost" name="code"></textarea>
+									<textarea class="form-control hidden codePost" name="code">{{ $snippet->code }}</textarea>
 								</div>
 							</div>
 

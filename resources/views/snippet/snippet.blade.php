@@ -27,8 +27,10 @@
 					<h1 id="forms"> {{ $snippet->name }}
 						@if(Auth::check())
 							<div class="pull-right">
-								@if ($snippet->id_user == Auth::user()->id)
-									<a class="btn btn-danger" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> <i class="fa fa-pencil"></i> Edit this snipet </a>
+								@if(Auth::check())
+									@if ($snippet->id_user == Auth::user()->id)
+										<a class="btn btn-danger" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> <i class="fa fa-pencil"></i> Edit this snippet </a>
+									@endif	
 								@endif
 					        	<a href="javascript:toggleLike();" id="likeButton" class="btn btn-danger">
 					        		@if ($snippet->isLiked())
@@ -49,6 +51,41 @@
 			    				$("#likeButton").html('<i class="fa fa-thumbs-down"></i> Unlike this snippet');
 			    			} else {
 			    				$("#likeButton").html('<i class="fa fa-thumbs-up"></i> Like this snippet');
+			    			}
+			    		});
+			    	}
+
+			    	function editComment(id){
+			    		var comment = $("#comment_" + id);
+			    		var oldComment = $(comment).html();
+			    		$(comment).html('<span class="oldComment hidden">' + oldComment + '</span><textarea class="form-control" id="editComment_' + id + '">' + oldComment + '</textarea>');
+			    		$(comment).parent().find('.commentButtons').hide();
+			    		$(comment).parent().find('.saveComment').show();
+			    	}
+
+			    	function saveComment(id){
+			    		var comment = $("#comment_" + id);
+			    		var newComment = $("#editComment_" + id).val();
+			    		$.post("/snippet/comment/edit", { _token: '{{ csrf_token() }}', id: id, comment: newComment }).done(function(data){
+			    			if (data == 'true'){
+			    				console.log('yes');
+			    				$(comment).html(newComment);
+			    			} else {
+			    				console.log('no');
+			    				$(comment).html( $(comment).find('.oldComment').html() );
+			    			}
+			    			$(comment).parent().find('.commentButtons').show();
+			    			$(comment).parent().find('.saveComment').hide();
+			    		});
+			    		
+			    	}
+
+			    	function deleteComment(id){
+			    		$.post("/snippet/comment/delete", { _token: '{{ csrf_token() }}', id: id }).done(function(data){
+			    			if (data == 'true'){
+			    				$("#masterComment_" + id).fadeOut('slow', function(){
+			    					$(this).remove();
+			    				})
 			    			}
 			    		});
 			    	}
@@ -90,13 +127,20 @@
 	</div>
 
 	@foreach($snippet->comments as $comment)
-		<div class="row">
+		<div class="row" id="masterComment_{{ $comment->id }}">
 			<div class="container">
 				
 				<div class="col-md-12">
 					<blockquote>
-						<p>{{ $comment->comment }}</p>
-						<small>Comment by: <cite title="Author">{{ $comment->author->name }}</cite> @ <cite title="Date"> {{ date('d-m-Y H:i', strtotime($comment->created_at)) }} </cite></small>
+						<p id="comment_{{ $comment->id }}">{{ $comment->comment }}</p>
+						<a onclick="saveComment({{ $comment->id }});" class="btn btn-danger saveComment pull-right" style="display:none;">Save comment</a>
+						<span class="pull-right commentButtons" style="margin-top:-20px;"> 
+							@if(Auth::check() && $comment->id_user == Auth::user()->id) 
+								<a class="btn btn-danger" href="javascript:editComment({{ $comment->id }});"><i class="fa fa-pencil fa-lg"></i></a> 
+								<a class="btn btn-danger" href="javascript:deleteComment({{ $comment->id }});"><i class="fa fa-trash fa-lg"></i></a> 
+							@endif 
+						</span>
+						<small>Comment by: <cite title="Author">{{ $comment->author->name }} ({{ $comment->author->email }})</cite> @ <cite title="Date"> {{ date('d-m-Y H:i', strtotime($comment->created_at)) }} </cite></small>
 					</blockquote>
 				</div>
 

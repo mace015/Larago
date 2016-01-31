@@ -24,8 +24,10 @@
 							By: {{ $snippet->author->name }}
 							<hr />
 							<a href="{{ URL::route('snippet', array( $snippet->id )) }}"> View this snippet </a>
-							@if ($snippet->id_user == Auth::user()->id)
-								<a class="pull-right" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> Edit this snipet </a>
+							@if(Auth::check())
+								@if ($snippet->id_user == Auth::user()->id)
+									<a class="pull-right" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> Edit this snippet </a>
+								@endif
 							@endif
 		                </div>
 	              	</div>
