@@ -44,6 +44,8 @@ Route::group(array('middleware' => 'auth'), function(){
 	Route::get('/editsnippet/{id}', array('as' => 'editsnippet', 'uses' => 'SnippetController@getEditSnippet'));
 	Route::post('/editsnippet/{id}', array('uses' => 'SnippetController@postEditSnippet'));
 
+	Route::get('/deletesnippet/{id}', array('as' => 'deletesnippet', 'uses' => 'SnippetController@getDeleteSnippet'));
+
 	Route::get('/mysnippets', array('as' => 'mysnippets', 'uses' => 'SnippetController@getMySnippets'));
 
 	Route::post('/snippet/comment/edit', array('uses' => 'SnippetController@editComment'));

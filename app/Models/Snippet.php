@@ -10,7 +10,7 @@ class Snippet extends Model {
 
 	protected $table = 'snippets';
 
-	protected $protected = ['id_user'];
+	protected $guarded = ['id', 'id_user'];
 
 	public function likes(){
 

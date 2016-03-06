@@ -12,7 +12,7 @@
 
 	<script src="{{ asset('js/highlight/highlight.pack.js') }}"></script>
 	<script type="text/javascript"> hljs.initHighlightingOnLoad(); </script>
-	
+
 @stop
 
 
@@ -20,7 +20,7 @@
 
 	<div class="row">
 		<div class="container">
-			
+
 			<div class="col-md-12">
 
 			    <div class="page-header">
@@ -30,7 +30,8 @@
 								@if(Auth::check())
 									@if ($snippet->id_user == Auth::user()->id)
 										<a class="btn btn-danger" href="{{ URL::route('editsnippet', array( $snippet->id )) }}"> <i class="fa fa-pencil"></i> Edit this snippet </a>
-									@endif	
+										<a class="btn btn-danger" href="{{ URL::route('deletesnippet', array( $snippet->id )) }}"> <i class="fa fa-trash"></i> Delete this snippet </a>
+									@endif
 								@endif
 					        	<a href="javascript:toggleLike();" id="likeButton" class="btn btn-danger">
 					        		@if ($snippet->isLiked())
@@ -77,7 +78,7 @@
 			    			$(comment).parent().find('.commentButtons').show();
 			    			$(comment).parent().find('.saveComment').hide();
 			    		});
-			    		
+
 			    	}
 
 			    	function deleteComment(id){
@@ -89,7 +90,7 @@
 			    			}
 			    		});
 			    	}
-			    </script>	
+			    </script>
 
 			    <p> <strong> {{ $snippet->short_desc }} </strong> </p>
 			    <p> {{ $snippet->long_desc }} </p>
@@ -101,7 +102,7 @@
 
 	<div class="row">
 		<div class="container">
-			
+
 			<div class="col-md-12">
 	            <h2 id="nav-tabs">Code</h2>
 	            <div class="bs-component">
@@ -116,7 +117,7 @@
 
 	<div class="row">
 		<div class="container">
-			
+
 			<div class="col-md-12">
 				<div class="page-header">
 					<h2> Comments </h2>
@@ -129,16 +130,16 @@
 	@foreach($snippet->comments as $comment)
 		<div class="row" id="masterComment_{{ $comment->id }}">
 			<div class="container">
-				
+
 				<div class="col-md-12">
 					<blockquote>
 						<p id="comment_{{ $comment->id }}">{{ $comment->comment }}</p>
 						<a onclick="saveComment({{ $comment->id }});" class="btn btn-danger saveComment pull-right" style="display:none;">Save comment</a>
-						<span class="pull-right commentButtons" style="margin-top:-20px;"> 
-							@if(Auth::check() && $comment->id_user == Auth::user()->id) 
-								<a class="btn btn-danger" href="javascript:editComment({{ $comment->id }});"><i class="fa fa-pencil fa-lg"></i></a> 
-								<a class="btn btn-danger" href="javascript:deleteComment({{ $comment->id }});"><i class="fa fa-trash fa-lg"></i></a> 
-							@endif 
+						<span class="pull-right commentButtons" style="margin-top:-20px;">
+							@if(Auth::check() && $comment->id_user == Auth::user()->id)
+								<a class="btn btn-danger" href="javascript:editComment({{ $comment->id }});"><i class="fa fa-pencil fa-lg"></i></a>
+								<a class="btn btn-danger" href="javascript:deleteComment({{ $comment->id }});"><i class="fa fa-trash fa-lg"></i></a>
+							@endif
 						</span>
 						<small>Comment by: <cite title="Author">{{ $comment->author->name }} ({{ $comment->author->email }})</cite> @ <cite title="Date"> {{ date('d-m-Y H:i', strtotime($comment->created_at)) }} </cite></small>
 					</blockquote>
@@ -148,47 +149,49 @@
 		</div>
 	@endforeach
 
-	<div class="row">
-		<div class="container">
-		  	<div class="col-md-12">
+	@if (Auth::check())
+		<div class="row">
+			<div class="container">
+			  	<div class="col-md-12">
 
-			@if($errors->any())
-				<div class="bs-component">
-				<div class="alert alert-dismissable alert-danger">
-					<button type="button" class="close" data-dismiss="alert">×</button>
-					<strong>Whoops....! Something went wrong!</strong> 
-						@foreach($errors->all() as $error)
-							<p> {{ $error }} </p>
-						@endforeach
-				</div>
-				<div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div></div>
-			@endif
+				@if($errors->any())
+					<div class="bs-component">
+					<div class="alert alert-dismissable alert-danger">
+						<button type="button" class="close" data-dismiss="alert">×</button>
+						<strong>Whoops....! Something went wrong!</strong>
+							@foreach($errors->all() as $error)
+								<p> {{ $error }} </p>
+							@endforeach
+					</div>
+					<div id="source-button" class="btn btn-primary btn-xs" style="display: none;">&lt; &gt;</div></div>
+				@endif
 
-		    <div class="well bs-component">
-			    <fieldset>
+			    <div class="well bs-component">
+				    <fieldset>
 
-	          		<legend class="center">Comment on this snippet: </legend>
-	          
-	          		{!! Form::open(array('route' => array('comment', $snippet->id))) !!}
-						<div class="form-group">
-							<label for="Comment" class="col-md-2 control-label">Comment</label>
-							<div class="col-md-10">
-								<textarea class="form-control" rows="3" name="comment"></textarea>
-								<span class="help-block">Please do not use any foul language or place useless comments, these will be removed.</span>
+		          		<legend class="center">Comment on this snippet: </legend>
+
+		          		{!! Form::open(array('route' => array('comment', $snippet->id))) !!}
+							<div class="form-group">
+								<label for="Comment" class="col-md-2 control-label">Comment</label>
+								<div class="col-md-10">
+									<textarea class="form-control" rows="3" name="comment"></textarea>
+									<span class="help-block">Please do not use any foul language or place useless comments, these will be removed.</span>
+								</div>
 							</div>
-						</div>
 
-						<div class="form-group">
-							<div class="col-md-10 col-md-offset-2">
-								<button type="submit" class="btn btn-danger">Send comment</button>
+							<div class="form-group">
+								<div class="col-md-10 col-md-offset-2">
+									<button type="submit" class="btn btn-danger">Send comment</button>
+								</div>
 							</div>
-						</div>
-					{!! Form::close() !!}
-	          
-	        	</fieldset>
-		  	</div>
+						{!! Form::close() !!}
 
+		        	</fieldset>
+			  	</div>
+
+			</div>
 		</div>
-	</div>
+	@endif
 
 @stop

@@ -39,7 +39,12 @@ class SnippetController extends BaseController {
 
 	public function postAddSnippet(AddSnippetRequest $request){
 
-		return Processor::init('SnippetProcessor', array('next' => 'snippets'))->storeSnippet();
+		$snippet = Auth::user()->snippets()->create(Input::all());
+
+		Session::flash('message', 'Your snippet has been added!');
+		Session::flash('type', 'notice');
+
+		return Redirect::route('snippets');
 
 	}
 
@@ -54,15 +59,28 @@ class SnippetController extends BaseController {
 
 	}
 
+	public function getDeleteSnippet($id){
+
+		$snippet = Snippet::where('id_user', Auth::user()->id)->find($id);
+		if ($snippet){
+			$snippet->delete();
+
+			Session::flash('message', 'Your snippet has been deleted!');
+			Session::flash('type', 'notice');
+
+			return Redirect::route('mysnippets');
+
+		} else {
+			return Redirect::route('home');
+		}
+
+	}
+
 	public function postEditSnippet(AddSnippetRequest $request, $id){
 
 		$snippet = Snippet::where('id_user', Auth::user()->id)->find($id);
 		if ($snippet){
-			$snippet->name = Input::get('name');
-			$snippet->short_desc = Input::get('short_desc');
-			$snippet->long_desc = Input::get('long_desc');
-			$snippet->code = Input::get('code');
-			$snippet->save();
+			$snippet->update($request->all());
 
 			Session::flash('message', 'Your snippet has been edited!');
 			Session::flash('type', 'notice');
@@ -96,28 +114,33 @@ class SnippetController extends BaseController {
 	public function editComment(){
 
 		if (Auth::check()){
+
 			$comment = Comment::where('id_user', Auth::user()->id)->find(Input::get('id'));
 			if ($comment){
+
 				$comment->comment = Input::get('comment');
 				$comment->save();
-
 				return 'true';
+
 			}
+
 		}
 
 		return 'false';
 
 	}
-
 	public function deleteComment(){
 
 		if (Auth::check()){
+
 			$comment = Comment::where('id_user', Auth::user()->id)->find(Input::get('id'));
 			if ($comment){
-				$comment->delete();
 
+				$comment->delete();
 				return 'true';
+
 			}
+
 		}
 
 		return 'false';

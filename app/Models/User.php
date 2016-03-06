@@ -12,13 +12,14 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
 	protected $table = 'users';
 
-	protected $guarded = ['id'];
+	protected $guarded = array('id','activation','remember_token');
 
-	protected $hidden = ['password', 'remember_token'];
+	protected $hidden = array('password', 'remember_token');
 
-	public function scopeActivated($query, $hash)
-    {
+	public function scopeActivated($query, $hash){
+
         return $query->where('activation', '=', $hash);
+
     }
 
 	public function snippets(){
